@@ -9,8 +9,6 @@ const taskRoutes = require('./routes/task');
 const authRoutes = require('./routes/auth');
 
 const app = express();
-
-//const { v4: uuidv4 } = require('uuid');
  
 app.use(bodyParser.urlencoded()); 
 app.use(bodyParser.json()); 
@@ -37,11 +35,12 @@ app.use((error, req, res, next) => {
   res.status(status).json({ message: message, data: data });
 });
 
+const PORT = process.env.PORT || 3000;
 mongoose
   .connect(
     'mongodb+srv://NehaSingh:mongodb@cluster0.eicjg.mongodb.net/task?retryWrites=true'
   )
   .then(result => {
-    app.listen(8080);
+    app.listen(PORT);
   })
   .catch(err => console.log(err));

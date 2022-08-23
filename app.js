@@ -35,7 +35,7 @@ app.use((error, req, res, next) => {
   res.status(status).json({ message: message, data: data });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 mongoose
   .connect(
     'mongodb+srv://NehaSingh:mongodb@cluster0.eicjg.mongodb.net/task?retryWrites=true'

@@ -78,7 +78,7 @@ exports.login = (req, res, next) => {
           userId: loadedUser._id.toString()
         },
         'somesupersecretsecret',
-        { expiresIn: '1hr' },
+        { expiresIn: '5hr' },
       );
       res.status(200).json({ token: token, userId: loadedUser._id.toString() });
     })
@@ -171,7 +171,6 @@ const validateUserSignUp = async (email, otp) => {
 
 
 
-
   // const authHeader = req.headers["authorization"];
   // console.log(authHeader);
   // //console.log(authHeader.login);
@@ -187,6 +186,8 @@ const validateUserSignUp = async (email, otp) => {
   // }
   // });
   //const authHeader = req.headers["authorization"];
+
+  
   module.exports.logoutUser = async (req, res) => {
    try {
     console.log("emtered");

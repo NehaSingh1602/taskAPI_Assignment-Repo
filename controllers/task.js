@@ -7,7 +7,7 @@ const Task = require('../models/task');
 
 exports.getTask = (req, res, next) => {
   const currentPage = req.query.page || 1;
-  const perPage = 2;
+  const perPage = 20;
   let totalItems;
   Task.find()
     .countDocuments()
@@ -50,6 +50,32 @@ exports.createTask = (req, res, next) => {
   console.log(date);
   const status = req.body.status;
   console.log(status);
+
+  const array = json2array(req.body);
+  const validArray = ["taskTitle","date","status"];
+
+  validArray.forEach(function(key){
+    var myIndex = array.indexOf(key);
+    if (myIndex !== -1) {
+      array.splice(myIndex, 1);
+    }
+  });
+  console.log(array);
+  if(array.length > 0)
+  {
+        const error = new Error('Invalid JSON schema');
+        error.statusCode = 401;
+        throw error;
+  }
+  
+  //console.log(array);
+
+    if(status != "Completed" && status != "Incomplete")
+      {
+        const error = new Error('Status should be Completed or Incomplete');
+        error.statusCode = 401;
+        throw error;
+      }
   const tasks = new Task({
     taskTitle: taskTitle,
     date: date,
@@ -71,6 +97,15 @@ exports.createTask = (req, res, next) => {
       next(err);
     });
 };
+
+function json2array(json){
+  var result = [];
+  var keys = Object.keys(json);
+  keys.forEach(function(key){
+      result.push(key);
+  });
+  return result;
+}
 
 exports.getTasks = (req, res, next) => {
   const taskId = req.params.taskId;
@@ -99,9 +134,24 @@ exports.updateTask = (req, res, next) => {
   //   error.statusCode = 422;
   //   throw error;
   // }
-  const task = req.body.taskTitle;
-  const date = req.body.date;
-  const status = req.body.status;
+  let task = null;
+  let date= null;
+  let status= null;
+  if(req.body.taskTitle)
+     task = req.body.taskTitle;
+  if(req.body.date)
+     date = req.body.date;
+  if(req.body.status){
+     status = req.body.status;
+
+   console.log(status);
+     if(status != "Completed" && status != "Incomplete")
+     {
+       const error = new Error('Status should be Completed or Incomplete');
+       error.statusCode = 401;
+       throw error;
+     }
+    }
 
   Task.findById(taskId)
     .then(tasks => {
@@ -110,9 +160,12 @@ exports.updateTask = (req, res, next) => {
         error.statusCode = 404;
         throw error;
       }
-      tasks.taskTitle = task;
-      tasks.date = date;
-      tasks.status = status;
+      if(task)
+        tasks.taskTitle = task;
+      if(date)
+        tasks.date = date;
+      if(status)
+        tasks.status = status;
       
       return tasks.save();
     })
@@ -125,6 +178,23 @@ exports.updateTask = (req, res, next) => {
       }
       next(err);
     });
+    
+    const array = json2array(req.body);
+    const validArray = ["taskTitle","date","status"];
+  
+    validArray.forEach(function(key){
+      var myIndex = array.indexOf(key);
+      if (myIndex !== -1) {
+        array.splice(myIndex, 1);
+      }
+    });
+    console.log(array);
+    if(array.length > 0)
+    {
+          const error = new Error('Invalid JSON schema');
+          error.statusCode = 401;
+          throw error;
+    }  
 };
 
 exports.deleteTask = (req, res, next) => {
